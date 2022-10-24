@@ -1,0 +1,6 @@
+.idea/
+__pycache__/
+check.py
+TestTask_1.pdf
+*output*.xlsx
+!TestTask_1_output_blank_template.xlsx
