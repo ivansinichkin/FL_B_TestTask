@@ -1,6 +1,6 @@
 from openpyxl import load_workbook, Workbook
 from read_url import parse_url
-from read_data import copy_template, search_start_point, search_data_area2, add_data, write_to_output
+from read_data import copy_template, search_start_point, search_data_area, add_data, write_to_output
 
 input_file = 'TestTask_1_input_1.xlsx'
 template_file = 'TestTask_1_output_blank_template.xlsx'
@@ -39,12 +39,12 @@ copy_template(sht_temp, out_sheet)
 table_starts = search_start_point(sheet)
 # выполняем поиск исходных данных и добавляем их в список extracted_data
 for i in table_starts:
-    data_area = search_data_area2(i, sheet)
+    data_area = search_data_area(i, sheet)
     add_data(extracted_data, data_area, sheet)
 
 for i in extracted_data:
     # три попытки выполнить парсинг сайта на случай ошибок или нестабильного соединения
-    tries = 1
+    tries = 3
     while tries > 0:
         try:
             vendor_code, price = parse_url(i[1])

@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
@@ -11,7 +10,14 @@ def parse_url(url):
     try:
         driver = webdriver.Chrome()
         driver.get(url=url)
-        print(driver.title)
+        # в случае возникновения ошибок в ссылке или на стороне сервера, и если ошибка указана в начале title,
+        # функция вернет номер ошибки
+        title = driver.title
+        if len(title.split(' ')[0]) == 3:
+            msg = ' '.join(('Ошибка', title.split(' ')[0]))
+            vendor_code_value = msg
+            price_value = msg
+            return vendor_code_value, price_value
         # находим во всплывающем окне кнопку Астана и кликаем ее
         astana_button = WebDriverWait(driver, 10).\
             until(EC.element_to_be_clickable((By.XPATH, '//div[@class="text-no-wrap list"]/div/div')))
@@ -23,7 +29,8 @@ def parse_url(url):
         vendor_code_value = vendor_code.text.split(' ')[1]
         # также проверяем наличие в элементе текста с символом '₸' и после этого добываем цену
         if WebDriverWait(driver, 10). \
-                until(EC.text_to_be_present_in_element((By.XPATH, '//div[@class="text-bold text-ts5 text-color1"]'), '₸')):
+                until(EC.text_to_be_present_in_element((By.XPATH,
+                                                        '//div[@class="text-bold text-ts5 text-color1"]'), '₸')):
             price = driver.find_element(By.XPATH,  '//div[@class="text-bold text-ts5 text-color1"]')
         price_value = ''.join(price.text.split(' ')[0:2])
 
